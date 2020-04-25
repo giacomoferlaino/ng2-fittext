@@ -47,7 +47,8 @@ export class Ng2FittextDirective
       }
       this.fontSize = fontSize;
       this.fontSizeChanged.emit(fontSize);
-      this.el.nativeElement.style.setProperty(
+      this.renderer.setStyle(
+        this.el.nativeElement,
         'font-size',
         fontSize.toString() + 'px'
       );
@@ -102,7 +103,7 @@ export class Ng2FittextDirective
 
   ngOnInit() {
     this.done = false;
-    this.el.nativeElement.style.setProperty('will-change', 'content');
+    this.renderer.setStyle(this.el.nativeElement, 'will-change', 'content');
     this.ngAfterViewInit();
   }
 

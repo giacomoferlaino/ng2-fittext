@@ -8,7 +8,9 @@ describe('Class: Ng2FittextDirective', () => {
 
   beforeEach(() => {
     elMock = {} as ElementRef;
-    rendererMock = {} as Renderer2;
+    rendererMock = ({
+      setStyle: () => {},
+    } as unknown) as Renderer2;
     ng2FittextDirective = new Ng2FittextDirective(elMock, rendererMock);
   });
 
@@ -24,9 +26,7 @@ describe('Class: Ng2FittextDirective', () => {
       );
       isDoneSpy = spyOn(ng2FittextDirective, 'isDone').and.returnValue(false);
       elMock.nativeElement = {
-        style: {
-          setProperty: () => {},
-        },
+        style: {},
       };
     });
 
@@ -78,11 +78,13 @@ describe('Class: Ng2FittextDirective', () => {
 
     it('Should update the nativeElement with the new font size', () => {
       newFontSize = 500;
-      spyOn(ng2FittextDirective.el.nativeElement.style, 'setProperty');
+      spyOn(ng2FittextDirective.renderer, 'setStyle');
       ng2FittextDirective.setFontSize(newFontSize);
-      expect(
-        ng2FittextDirective.el.nativeElement.style.setProperty
-      ).toHaveBeenCalledWith('font-size', `${newFontSize}px`);
+      expect(ng2FittextDirective.renderer.setStyle).toHaveBeenCalledWith(
+        elMock.nativeElement,
+        'font-size',
+        `${newFontSize}px`
+      );
     });
   });
 
