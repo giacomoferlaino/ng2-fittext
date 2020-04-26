@@ -1,10 +1,23 @@
 import { Ng2FittextDirective } from '../ng2-fittext.directive';
-import { Renderer2, ElementRef } from '@angular/core';
+import { Renderer2, ElementRef, EventEmitter } from '@angular/core';
 
 describe('Class: Ng2FittextDirective', () => {
   let ng2FittextDirective: Ng2FittextDirective;
   let elMock: ElementRef;
   let rendererMock: Renderer2;
+  const defaultProperties: any = {
+    fittext: undefined,
+    activateOnResize: false,
+    container: undefined,
+    activateOnInputEvents: false,
+    minFontSize: 7,
+    maxFontSize: 1000,
+    useMaxFontSize: true,
+    modelToWatch: undefined,
+    fontSizeChanged: new EventEmitter(),
+    fontSize: 1000,
+    done: false,
+  };
 
   beforeEach(() => {
     elMock = {} as ElementRef;
@@ -14,7 +27,58 @@ describe('Class: Ng2FittextDirective', () => {
     ng2FittextDirective = new Ng2FittextDirective(elMock, rendererMock);
   });
 
-  describe('Method: setFontSize', () => {
+  describe('Method: constructor', () => {
+    it('Should initialize the object properties to their default values', () => {
+      expect(ng2FittextDirective.fittext).toEqual(defaultProperties.fittext);
+      expect(ng2FittextDirective.activateOnResize).toEqual(
+        defaultProperties.activateOnResize
+      );
+      expect(ng2FittextDirective.container).toEqual(
+        defaultProperties.container
+      );
+      expect(ng2FittextDirective.activateOnInputEvents).toEqual(
+        defaultProperties.activateOnInputEvents
+      );
+      expect(ng2FittextDirective.minFontSize).toEqual(
+        defaultProperties.minFontSize
+      );
+      expect(ng2FittextDirective.maxFontSize).toEqual(
+        defaultProperties.maxFontSize
+      );
+      expect(ng2FittextDirective.useMaxFontSize).toEqual(
+        defaultProperties.useMaxFontSize
+      );
+      expect(ng2FittextDirective.modelToWatch).toEqual(
+        defaultProperties.modelToWatch
+      );
+      expect(ng2FittextDirective.fontSizeChanged).toEqual(
+        defaultProperties.fontSizeChanged
+      );
+      expect(ng2FittextDirective.fontSize).toEqual(defaultProperties.fontSize);
+      expect(ng2FittextDirective.done).toEqual(defaultProperties.done);
+    });
+  });
+
+  describe('Setter: fontSize', () => {
+    let newFontSize: number;
+
+    it('Should use the minFontSize property value if the specified font size is smaller', () => {
+      newFontSize = defaultProperties.minFontSize - 1;
+      ng2FittextDirective.fontSize = newFontSize;
+      expect(ng2FittextDirective.fontSize).toEqual(
+        defaultProperties.minFontSize
+      );
+    });
+    it('Should use the maxFontSize property value if the specified font size is bigger', () => {
+      newFontSize = defaultProperties.maxFontSize + 1;
+      ng2FittextDirective.fontSize = newFontSize;
+      expect(ng2FittextDirective.fontSize).toEqual(
+        defaultProperties.maxFontSize
+      );
+    });
+  });
+
+  describe('Method: setElementFontSize', () => {
     let newFontSize: number;
     let isVisibleSpy: jasmine.Spy;
 
@@ -32,36 +96,20 @@ describe('Class: Ng2FittextDirective', () => {
     it('Should not change the font size if the element is not visible', () => {
       isVisibleSpy.and.returnValue(false);
       const previousFontSize: number = ng2FittextDirective.fontSize;
-      ng2FittextDirective.setFontSize(newFontSize);
+      ng2FittextDirective.setElementFontSize(newFontSize);
       expect(ng2FittextDirective.fontSize).toEqual(previousFontSize);
     });
 
     it('Should not change the font size if the fitting operation is done', () => {
       ng2FittextDirective.done = true;
       const previousFontSize: number = ng2FittextDirective.fontSize;
-      ng2FittextDirective.setFontSize(newFontSize);
+      ng2FittextDirective.setElementFontSize(newFontSize);
       expect(ng2FittextDirective.fontSize).toEqual(previousFontSize);
-    });
-
-    it('Should use the minFontSize property value if the specified font size is smaller', () => {
-      const minFontSize: number = ng2FittextDirective.minFontSize;
-      newFontSize = 5;
-      ng2FittextDirective.setFontSize(newFontSize);
-      const currentFontSize: number = ng2FittextDirective.fontSize;
-      expect(currentFontSize).toEqual(minFontSize);
-    });
-
-    it('Should use the maxFontSize property value if the specified font size is bigger', () => {
-      const maxFontSize: number = ng2FittextDirective.maxFontSize;
-      newFontSize = 1001;
-      ng2FittextDirective.setFontSize(newFontSize);
-      const currentFontSize: number = ng2FittextDirective.fontSize;
-      expect(currentFontSize).toEqual(maxFontSize);
     });
 
     it('Should set a new fontSize value', () => {
       newFontSize = 500;
-      ng2FittextDirective.setFontSize(newFontSize);
+      ng2FittextDirective.setElementFontSize(newFontSize);
       const currentFontSize: number = ng2FittextDirective.fontSize;
       expect(currentFontSize).toEqual(newFontSize);
     });
@@ -69,7 +117,7 @@ describe('Class: Ng2FittextDirective', () => {
     it('Should emit the font size change', () => {
       newFontSize = 500;
       spyOn(ng2FittextDirective.fontSizeChanged, 'emit');
-      ng2FittextDirective.setFontSize(newFontSize);
+      ng2FittextDirective.setElementFontSize(newFontSize);
       expect(ng2FittextDirective.fontSizeChanged.emit).toHaveBeenCalledWith(
         newFontSize
       );
@@ -78,7 +126,7 @@ describe('Class: Ng2FittextDirective', () => {
     it('Should update the nativeElement with the new font size', () => {
       newFontSize = 500;
       spyOn(ng2FittextDirective.renderer, 'setStyle');
-      ng2FittextDirective.setFontSize(newFontSize);
+      ng2FittextDirective.setElementFontSize(newFontSize);
       expect(ng2FittextDirective.renderer.setStyle).toHaveBeenCalledWith(
         elMock.nativeElement,
         'font-size',
@@ -89,7 +137,7 @@ describe('Class: Ng2FittextDirective', () => {
 
   describe('Getter: fontSize', () => {
     it('Should return the current font size', () => {
-      expect(ng2FittextDirective.fontSize).toEqual(1000);
+      expect(ng2FittextDirective.fontSize).toEqual(defaultProperties.fontSize);
     });
   });
 
