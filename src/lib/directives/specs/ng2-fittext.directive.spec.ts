@@ -17,38 +17,37 @@ describe('Class: Ng2FittextDirective', () => {
   describe('Method: setFontSize', () => {
     let newFontSize: number;
     let isVisibleSpy: jasmine.Spy;
-    let isDoneSpy: jasmine.Spy;
 
     beforeEach(() => {
       newFontSize = 100;
       isVisibleSpy = spyOn(ng2FittextDirective, 'isVisible').and.returnValue(
         true
       );
-      isDoneSpy = spyOn(ng2FittextDirective, 'isDone').and.returnValue(false);
       elMock.nativeElement = {
         style: {},
       };
+      ng2FittextDirective.done = false;
     });
 
     it('Should not change the font size if the element is not visible', () => {
       isVisibleSpy.and.returnValue(false);
-      const previousFontSize: number = ng2FittextDirective.getFontSize();
+      const previousFontSize: number = ng2FittextDirective.fontSize;
       ng2FittextDirective.setFontSize(newFontSize);
-      expect(ng2FittextDirective.getFontSize()).toEqual(previousFontSize);
+      expect(ng2FittextDirective.fontSize).toEqual(previousFontSize);
     });
 
     it('Should not change the font size if the fitting operation is done', () => {
-      isDoneSpy.and.returnValue(true);
-      const previousFontSize: number = ng2FittextDirective.getFontSize();
+      ng2FittextDirective.done = true;
+      const previousFontSize: number = ng2FittextDirective.fontSize;
       ng2FittextDirective.setFontSize(newFontSize);
-      expect(ng2FittextDirective.getFontSize()).toEqual(previousFontSize);
+      expect(ng2FittextDirective.fontSize).toEqual(previousFontSize);
     });
 
     it('Should use the minFontSize property value if the specified font size is smaller', () => {
       const minFontSize: number = ng2FittextDirective.minFontSize;
       newFontSize = 5;
       ng2FittextDirective.setFontSize(newFontSize);
-      const currentFontSize: number = ng2FittextDirective.getFontSize();
+      const currentFontSize: number = ng2FittextDirective.fontSize;
       expect(currentFontSize).toEqual(minFontSize);
     });
 
@@ -56,14 +55,14 @@ describe('Class: Ng2FittextDirective', () => {
       const maxFontSize: number = ng2FittextDirective.maxFontSize;
       newFontSize = 1001;
       ng2FittextDirective.setFontSize(newFontSize);
-      const currentFontSize: number = ng2FittextDirective.getFontSize();
+      const currentFontSize: number = ng2FittextDirective.fontSize;
       expect(currentFontSize).toEqual(maxFontSize);
     });
 
     it('Should set a new fontSize value', () => {
       newFontSize = 500;
       ng2FittextDirective.setFontSize(newFontSize);
-      const currentFontSize: number = ng2FittextDirective.getFontSize();
+      const currentFontSize: number = ng2FittextDirective.fontSize;
       expect(currentFontSize).toEqual(newFontSize);
     });
 
@@ -88,9 +87,9 @@ describe('Class: Ng2FittextDirective', () => {
     });
   });
 
-  describe('Method: getFontSize', () => {
+  describe('Getter: fontSize', () => {
     it('Should return the current font size', () => {
-      expect(ng2FittextDirective.getFontSize()).toEqual(1000);
+      expect(ng2FittextDirective.fontSize).toEqual(1000);
     });
   });
 
@@ -172,13 +171,6 @@ describe('Class: Ng2FittextDirective', () => {
       expect(ng2FittextDirective.getStartFontSizeFromHeight()).toEqual(
         parentlientHeight
       );
-    });
-  });
-
-  describe('Method: isDone', () => {
-    it('Should return the done property value', () => {
-      const defaultDoneValue = false;
-      expect(ng2FittextDirective.isDone()).toBe(defaultDoneValue);
     });
   });
 

@@ -23,29 +23,29 @@ export class Ng2FittextDirective
   @Input('activateOnInputEvents') activateOnInputEvents: boolean;
   @Input('minFontSize') minFontSize = 7;
   @Input('maxFontSize') maxFontSize = 1000;
-
-  /* Deprecated */
-  @Input('useMaxFontSize') useMaxFontSize = true;
-
+  @Input('useMaxFontSize') useMaxFontSize = true; /* Deprecated */
   @Input('modelToWatch') modelToWatch: any;
-
   @Output() fontSizeChanged: EventEmitter<number> = new EventEmitter();
+  done: boolean = false;
 
-  private fontSize = 1000;
-  private speed = 1.05;
-  private done = false;
+  private _fontSize = 1000;
+  private _speed = 1.05;
+
+  get fontSize(): number {
+    return this._fontSize;
+  }
 
   constructor(public el: ElementRef<HTMLElement>, public renderer: Renderer2) {}
 
   setFontSize(fontSize: number): void {
-    if (this.isVisible() && !this.isDone()) {
+    if (this.isVisible() && !this.done) {
       if (fontSize < this.minFontSize) {
         fontSize = this.minFontSize;
       }
       if (fontSize > this.maxFontSize) {
         fontSize = this.maxFontSize;
       }
-      this.fontSize = fontSize;
+      this._fontSize = fontSize;
       this.fontSizeChanged.emit(fontSize);
       this.renderer.setStyle(
         this.el.nativeElement,
@@ -53,10 +53,6 @@ export class Ng2FittextDirective
         fontSize.toString() + 'px'
       );
     }
-  }
-
-  getFontSize(): number {
-    return this.fontSize;
   }
 
   calculateFontSize(fontSize: number, speed: number): number {
@@ -108,12 +104,14 @@ export class Ng2FittextDirective
   }
 
   ngAfterViewInit() {
-    if (this.isVisible() && !this.isDone()) {
+    if (this.isVisible() && !this.done) {
       if (this.fittext) {
         if (this.hasOverflow()) {
-          if (this.fontSize > this.minFontSize) {
+          if (this._fontSize > this.minFontSize) {
             // iterate only until font size is bigger than minimal value
-            this.setFontSize(this.calculateFontSize(this.fontSize, this.speed));
+            this.setFontSize(
+              this.calculateFontSize(this._fontSize, this._speed)
+            );
             this.ngAfterViewInit();
           }
         } else {
@@ -135,7 +133,7 @@ export class Ng2FittextDirective
   }
 
   ngAfterViewChecked() {
-    if (this.fontSize > this.minFontSize) {
+    if (this._fontSize > this.minFontSize) {
       this.setFontSize(this.getStartFontSizeFromHeight());
       this.ngAfterViewInit();
     }
@@ -151,10 +149,6 @@ export class Ng2FittextDirective
     return this.container
       ? this.container.clientWidth
       : this.el.nativeElement.parentElement.clientWidth;
-  }
-
-  isDone(): boolean {
-    return this.done;
   }
 
   isVisible(): boolean {
