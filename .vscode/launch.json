@@ -6,8 +6,16 @@
   "configurations": [
     {
       "type": "chrome",
+      "request": "launch",
+      "name": "Launch Angular Debug",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true
+    },
+    {
+      "type": "chrome",
       "request": "attach",
-      "name": "Unit tests",
+      "name": "Attach Unit tests",
       "address": "localhost",
       "port": 9333,
       "sourceMaps": true,
