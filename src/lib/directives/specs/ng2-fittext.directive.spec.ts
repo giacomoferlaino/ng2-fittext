@@ -10,12 +10,9 @@ describe('Class: Ng2FittextDirective', () => {
     activateOnResize: false,
     container: undefined,
     activateOnInputEvents: false,
-    minFontSize: 7,
-    maxFontSize: 1000,
     useMaxFontSize: true,
     modelToWatch: undefined,
     fontSizeChanged: new EventEmitter(),
-    fontSize: 1000,
     done: false,
   };
 
@@ -54,27 +51,7 @@ describe('Class: Ng2FittextDirective', () => {
       expect(ng2FittextDirective.fontSizeChanged).toEqual(
         defaultProperties.fontSizeChanged
       );
-      expect(ng2FittextDirective.fontSize).toEqual(defaultProperties.fontSize);
       expect(ng2FittextDirective.done).toEqual(defaultProperties.done);
-    });
-  });
-
-  describe('Setter: fontSize', () => {
-    let newFontSize: number;
-
-    it('Should use the minFontSize property value if the specified font size is smaller', () => {
-      newFontSize = defaultProperties.minFontSize - 1;
-      ng2FittextDirective.fontSize = newFontSize;
-      expect(ng2FittextDirective.fontSize).toEqual(
-        defaultProperties.minFontSize
-      );
-    });
-    it('Should use the maxFontSize property value if the specified font size is bigger', () => {
-      newFontSize = defaultProperties.maxFontSize + 1;
-      ng2FittextDirective.fontSize = newFontSize;
-      expect(ng2FittextDirective.fontSize).toEqual(
-        defaultProperties.maxFontSize
-      );
     });
   });
 
@@ -136,16 +113,10 @@ describe('Class: Ng2FittextDirective', () => {
   });
 
   describe('Getter: fontSize', () => {
-    it('Should return the current font size', () => {
-      expect(ng2FittextDirective.fontSize).toEqual(defaultProperties.fontSize);
-    });
-  });
-
-  describe('Method: calculateFontSize', () => {
-    it('Should return the font size rounded down', () => {
-      expect(ng2FittextDirective.calculateFontSize(10, 3)).toEqual(3);
-      expect(ng2FittextDirective.calculateFontSize(9, 3)).toEqual(3);
-      expect(ng2FittextDirective.calculateFontSize(8, 3)).toEqual(2);
+    it('Should return FontManager fontSize property value', () => {
+      expect(ng2FittextDirective.fontSize).toBe(
+        (ng2FittextDirective as any)._fontManager.fontSize
+      );
     });
   });
 
