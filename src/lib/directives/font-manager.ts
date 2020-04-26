@@ -16,11 +16,11 @@ export class FontManager {
     else this._fontSize = fontSize;
   }
 
-  public get fontSize(): number {
-    return this._fontSize;
+  public calculateNextFontSize(speed: number): number {
+    return Math.floor(this._fontSize / speed);
   }
 
-  public static calculateFontSize(fontSize: number, speed: number): number {
-    return Math.floor(fontSize / speed);
+  public get fontSize(): number {
+    return this._fontSize;
   }
 }

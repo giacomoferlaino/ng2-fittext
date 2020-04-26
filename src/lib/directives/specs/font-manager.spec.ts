@@ -47,11 +47,14 @@ describe('Class: FontManager', () => {
     });
   });
 
-  describe('Static Method: calculateFontSize', () => {
+  describe('Method: calculateNextFontSize', () => {
     it('Should return the font size rounded down', () => {
-      expect(FontManager.calculateFontSize(10, 3)).toEqual(3);
-      expect(FontManager.calculateFontSize(9, 3)).toEqual(3);
-      expect(FontManager.calculateFontSize(8, 3)).toEqual(2);
+      fontManager.fontSize = 10;
+      expect(fontManager.calculateNextFontSize(3)).toEqual(3);
+      fontManager.fontSize = 9;
+      expect(fontManager.calculateNextFontSize(3)).toEqual(3);
+      fontManager.fontSize = 8;
+      expect(fontManager.calculateNextFontSize(3)).toEqual(2);
     });
   });
 });
