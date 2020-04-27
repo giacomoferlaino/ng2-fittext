@@ -1,5 +1,6 @@
 import { Ng2FittextDirective } from '../ng2-fittext.directive';
 import { Renderer2, ElementRef, EventEmitter } from '@angular/core';
+import { Utils } from '../utils';
 
 describe('Class: Ng2FittextDirective', () => {
   let ng2FittextDirective: Ng2FittextDirective;
@@ -120,55 +121,6 @@ describe('Class: Ng2FittextDirective', () => {
     });
   });
 
-  describe('Method: checkOverflow', () => {
-    let parentElementMock: HTMLElement;
-    let childrenElementMock: HTMLElement;
-    let hasXAxisOverflowSpy: jasmine.Spy;
-    let hasYAxisOverflowSpy: jasmine.Spy;
-
-    beforeEach(() => {
-      parentElementMock = {} as HTMLElement;
-      childrenElementMock = {} as HTMLElement;
-      hasXAxisOverflowSpy = spyOn(
-        ng2FittextDirective,
-        'hasXAxisOverflow'
-      ).and.returnValue(false);
-      hasYAxisOverflowSpy = spyOn(
-        ng2FittextDirective,
-        'hasYAxisOverflow'
-      ).and.returnValue(false);
-    });
-
-    it('Should return false if no overflow is present', () => {
-      expect(
-        ng2FittextDirective.checkOverflow(
-          parentElementMock,
-          childrenElementMock
-        )
-      ).toBe(false);
-    });
-
-    it('Should return true if x axis has overflow', () => {
-      hasXAxisOverflowSpy.and.returnValue(true);
-      expect(
-        ng2FittextDirective.checkOverflow(
-          parentElementMock,
-          childrenElementMock
-        )
-      ).toBe(true);
-    });
-
-    it('Should return true if y axis has overflow', () => {
-      hasYAxisOverflowSpy.and.returnValue(true);
-      expect(
-        ng2FittextDirective.checkOverflow(
-          parentElementMock,
-          childrenElementMock
-        )
-      ).toBe(true);
-    });
-  });
-
   describe('Method: getStartFontSizeFromHeight', () => {
     it('Should return the container clientHeight value if the container is present', () => {
       const containerClientHeight = 10;
@@ -212,76 +164,6 @@ describe('Class: Ng2FittextDirective', () => {
     });
   });
 
-  describe('Method: hasXAxisOverflow', () => {
-    let parentElementMock: HTMLElement;
-    let childrenElementMock: HTMLElement;
-
-    beforeEach(() => {
-      parentElementMock = {
-        clientWidth: 0,
-      } as HTMLElement;
-      childrenElementMock = {
-        scrollWidth: 0,
-      } as HTMLElement;
-    });
-
-    it('Should return false if no overflow is present on the x axis', () => {
-      expect(
-        ng2FittextDirective.hasXAxisOverflow(
-          parentElementMock,
-          childrenElementMock
-        )
-      ).toBe(false);
-    });
-
-    it('Should return true if overflow is present on the x axis', () => {
-      childrenElementMock = {
-        scrollWidth: 2,
-      } as HTMLElement;
-      expect(
-        ng2FittextDirective.hasXAxisOverflow(
-          parentElementMock,
-          childrenElementMock
-        )
-      ).toBe(true);
-    });
-  });
-
-  describe('Method: hasYAxisOverflow', () => {
-    let parentElementMock: HTMLElement;
-    let childrenElementMock: HTMLElement;
-
-    beforeEach(() => {
-      parentElementMock = {
-        clientHeight: 0,
-      } as HTMLElement;
-      childrenElementMock = {
-        clientHeight: 0,
-      } as HTMLElement;
-    });
-
-    it('Should return false if no overflow is present on the x axis', () => {
-      expect(
-        ng2FittextDirective.hasYAxisOverflow(
-          parentElementMock,
-          childrenElementMock
-        )
-      ).toBe(false);
-    });
-
-    it('Should return true if overflow is present on the x axis', () => {
-      childrenElementMock = {
-        clientHeight: 2,
-      } as HTMLElement;
-      expect(
-        ng2FittextDirective.hasYAxisOverflow(
-          parentElementMock,
-          childrenElementMock
-        )
-      ).toBe(true);
-    });
-  });
-
   describe('Method: hasOverflow', () => {
     let containerMock: any;
     let parentElementMock: any;
@@ -300,7 +182,7 @@ describe('Class: Ng2FittextDirective', () => {
     });
 
     it('Should calculate the overflow using the container if is present', () => {
-      spyOn(ng2FittextDirective, 'checkOverflow').and.callFake(
+      spyOn(Utils, 'checkOverflow').and.callFake(
         (parentElement: any, childrenElement: any) => {
           expect(parentElement).toEqual(containerMock);
           return true;
@@ -311,7 +193,7 @@ describe('Class: Ng2FittextDirective', () => {
 
     it('Should calculate the overflow using the parent element if the container is not present', () => {
       delete ng2FittextDirective.container;
-      spyOn(ng2FittextDirective, 'checkOverflow').and.callFake(
+      spyOn(Utils, 'checkOverflow').and.callFake(
         (parentElement: any, childrenElement: any) => {
           expect(parentElement).toEqual(parentElementMock);
           return true;

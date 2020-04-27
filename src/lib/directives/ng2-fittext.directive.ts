@@ -12,6 +12,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { FontManager } from './font-manager';
+import { Utils } from './utils';
 
 @Directive({
   selector: '[fittext]',
@@ -54,21 +55,6 @@ export class Ng2FittextDirective
         this._fontManager.fontSize + 'px'
       );
     }
-  }
-
-  checkOverflow(parent: HTMLElement, children: HTMLElement): boolean {
-    return (
-      this.hasXAxisOverflow(parent, children) ||
-      this.hasYAxisOverflow(parent, children)
-    );
-  }
-
-  hasXAxisOverflow(parent: HTMLElement, children: HTMLElement): boolean {
-    return children.scrollWidth - parent.clientWidth > 0;
-  }
-
-  hasYAxisOverflow(parent: HTMLElement, children: HTMLElement): boolean {
-    return children.clientHeight - parent.clientHeight > 0;
   }
 
   @HostListener('window:resize', ['$event'])
@@ -154,8 +140,8 @@ export class Ng2FittextDirective
 
   hasOverflow(): boolean {
     return this.container
-      ? this.checkOverflow(this.container, this.el.nativeElement)
-      : this.checkOverflow(
+      ? Utils.checkOverflow(this.container, this.el.nativeElement)
+      : Utils.checkOverflow(
           this.el.nativeElement.parentElement,
           this.el.nativeElement
         );
