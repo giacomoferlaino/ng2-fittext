@@ -1,6 +1,6 @@
 import { Ng2FittextDirective } from '../ng2-fittext.directive';
 import { Renderer2, ElementRef, EventEmitter } from '@angular/core';
-import { Utils } from '../utils';
+import { HtmlElementUtils } from '../html-element-utils';
 
 describe('Class: Ng2FittextDirective', () => {
   let ng2FittextDirective: Ng2FittextDirective;
@@ -62,9 +62,7 @@ describe('Class: Ng2FittextDirective', () => {
 
     beforeEach(() => {
       newFontSize = 100;
-      isVisibleSpy = spyOn(ng2FittextDirective, 'isVisible').and.returnValue(
-        true
-      );
+      isVisibleSpy = spyOn(HtmlElementUtils, 'isVisible').and.returnValue(true);
       elMock.nativeElement = {
         style: {},
       };
@@ -121,49 +119,6 @@ describe('Class: Ng2FittextDirective', () => {
     });
   });
 
-  describe('Method: getStartFontSizeFromHeight', () => {
-    it('Should return the container clientHeight value if the container is present', () => {
-      const containerClientHeight = 10;
-      ng2FittextDirective.container = {
-        clientHeight: containerClientHeight,
-      } as HTMLElement;
-      expect(ng2FittextDirective.getStartFontSizeFromHeight()).toEqual(
-        containerClientHeight
-      );
-    });
-
-    it('Should return the parentElement clientHeight value if no container is present', () => {
-      const parentlientHeight = 11;
-      elMock.nativeElement = {
-        parentElement: {
-          clientHeight: parentlientHeight,
-        },
-      } as HTMLElement;
-      expect(ng2FittextDirective.getStartFontSizeFromHeight()).toEqual(
-        parentlientHeight
-      );
-    });
-  });
-
-  describe('Method: isVisible', () => {
-    it('Should return the true if getStartFontSizeFromHeight() is greater than zero', () => {
-      spyOn(ng2FittextDirective, 'getStartFontSizeFromHeight').and.returnValue(
-        1
-      );
-      expect(ng2FittextDirective.isVisible()).toBe(true);
-    });
-
-    it('Should return the false if getStartFontSizeFromHeight() is smaller or equal to zero', () => {
-      const spy = spyOn(
-        ng2FittextDirective,
-        'getStartFontSizeFromHeight'
-      ).and.returnValue(0);
-      expect(ng2FittextDirective.isVisible()).toBe(false);
-      spy.and.returnValue(-1);
-      expect(ng2FittextDirective.isVisible()).toBe(false);
-    });
-  });
-
   describe('Method: hasOverflow', () => {
     let containerMock: any;
     let parentElementMock: any;
@@ -182,7 +137,7 @@ describe('Class: Ng2FittextDirective', () => {
     });
 
     it('Should calculate the overflow using the container if is present', () => {
-      spyOn(Utils, 'checkOverflow').and.callFake(
+      spyOn(HtmlElementUtils, 'elementHasOverflow').and.callFake(
         (parentElement: any, childrenElement: any) => {
           expect(parentElement).toEqual(containerMock);
           return true;
@@ -193,7 +148,7 @@ describe('Class: Ng2FittextDirective', () => {
 
     it('Should calculate the overflow using the parent element if the container is not present', () => {
       delete ng2FittextDirective.container;
-      spyOn(Utils, 'checkOverflow').and.callFake(
+      spyOn(HtmlElementUtils, 'elementHasOverflow').and.callFake(
         (parentElement: any, childrenElement: any) => {
           expect(parentElement).toEqual(parentElementMock);
           return true;

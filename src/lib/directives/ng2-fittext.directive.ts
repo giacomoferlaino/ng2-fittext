@@ -12,7 +12,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { FontManager } from './font-manager';
-import { Utils } from './utils';
+import { HtmlElementUtils, ClientProperties } from './html-element-utils';
 
 @Directive({
   selector: '[fittext]',
@@ -62,9 +62,21 @@ export class Ng2FittextDirective
     this.done = false;
     if (this.activateOnResize && this.fittext) {
       if (this.activateOnInputEvents && this.fittext) {
-        this.setElementFontSize(this.getStartFontSizeFromHeight());
+        this.setElementFontSize(
+          HtmlElementUtils.getInitialFontSizeFromProperty(
+            this.container,
+            this.el,
+            ClientProperties.height
+          )
+        );
       } else {
-        this.setElementFontSize(this.getStartFontSizeFromWeight());
+        this.setElementFontSize(
+          HtmlElementUtils.getInitialFontSizeFromProperty(
+            this.container,
+            this.el,
+            ClientProperties.width
+          )
+        );
       }
 
       this.ngAfterViewInit();
@@ -75,7 +87,13 @@ export class Ng2FittextDirective
   onInputEvents(event: Event) {
     this.done = false;
     if (this.activateOnInputEvents && this.fittext) {
-      this.setElementFontSize(this.getStartFontSizeFromHeight());
+      this.setElementFontSize(
+        HtmlElementUtils.getInitialFontSizeFromProperty(
+          this.container,
+          this.el,
+          ClientProperties.height
+        )
+      );
       this.ngAfterViewInit();
     }
   }
@@ -117,33 +135,30 @@ export class Ng2FittextDirective
 
   ngAfterViewChecked() {
     if (this._fontManager.fontSize > this._fontManager.minFontSize) {
-      this.setElementFontSize(this.getStartFontSizeFromHeight());
+      this.setElementFontSize(
+        HtmlElementUtils.getInitialFontSizeFromProperty(
+          this.container,
+          this.el,
+          ClientProperties.height
+        )
+      );
       this.ngAfterViewInit();
     }
   }
 
-  getStartFontSizeFromHeight(): number {
-    return this.container
-      ? this.container.clientHeight
-      : this.el.nativeElement.parentElement.clientHeight;
-  }
-
-  private getStartFontSizeFromWeight(): number {
-    return this.container
-      ? this.container.clientWidth
-      : this.el.nativeElement.parentElement.clientWidth;
-  }
-
-  isVisible(): boolean {
-    return this.getStartFontSizeFromHeight() > 0;
-  }
-
   hasOverflow(): boolean {
     return this.container
-      ? Utils.checkOverflow(this.container, this.el.nativeElement)
-      : Utils.checkOverflow(
+      ? HtmlElementUtils.elementHasOverflow(
+          this.container,
+          this.el.nativeElement
+        )
+      : HtmlElementUtils.elementHasOverflow(
           this.el.nativeElement.parentElement,
           this.el.nativeElement
         );
+  }
+
+  private isVisible(): boolean {
+    return HtmlElementUtils.isVisible(this.container, this.el);
   }
 }
